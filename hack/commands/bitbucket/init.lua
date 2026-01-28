@@ -3,11 +3,14 @@ local prompt = require("moonshine.prompt")
 local bb = require("hack.bitbucket")
 local build = require("hack.commands.bitbucket.build")
 local cmd_utils = require("hack.commands.utils")
+local log = require("hack.log")
 
 local M = {}
 
 M.COMMAND_ARRAY = { "bitbucket" }
 
+---Register the command on a parent parser.
+---@param p any The parent parser.
 function M.register_command(p)
   local parser = p:command("bitbucket b")
     :summary("Perform common actions against a BitBucket server.")
@@ -18,19 +21,31 @@ function M.register_command(p)
   parser:option(
     "-a --address",
     "The BitBucket address to act against.",
-    cmd_utils.default_env_var(M.COMMAND_ARRAY, "address")
+    cmd_utils.default_env_var_value(M.COMMAND_ARRAY, "address")
   )
   parser:option(
     "-u --username",
     "The BitBucket username to use.",
-    cmd_utils.default_env_var(M.COMMAND_ARRAY, "username")
+    cmd_utils.default_env_var_value(M.COMMAND_ARRAY, "username")
   )
   parser:option("-w --password", "The BitBucket password to use. If not provided, will be prompted.")
 
   build.register_command(parser)
 end
 
+---Execute the command.
+---@param options table The options provided by the command line parser.
 function M.execute(options)
+  log:assert(
+    options.username,
+    "You must specify a username, either via --username or via the %s environment variable.",
+    cmd_utils.env_var_name(M.COMMAND_ARRAY, "username")
+  )
+  log:assert(
+    options.password,
+    "You must specify a password, either via --password or via the %s environment variable.",
+    cmd_utils.env_var_name(M.COMMAND_ARRAY, "password")
+  )
   local password = options.password
   if not password then
     password = prompt.get_pass("Bitbucket password:")

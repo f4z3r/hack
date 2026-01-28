@@ -7,16 +7,20 @@ local M = {}
 ---@param dir string The path to the git repo.
 ---@return table
 function M.get_remotes(dir)
-  local res = {}
+  local tmp = {}
   local out = proc.run("git remote -v", dir, true)
   for _, line in ipairs(strings.lines(out, true)) do
     local name, url, type = unpack(strings.split(line, "%s+"))
-    type = type:match("%((.*)%)")
-    if res[name] then
-      res[name].types[#res[name].types + 1] = type
+    type = type:sub(2, -2) -- trim parentheses
+    if tmp[name] then
+      tmp[name].types[#tmp[name].types + 1] = type
     else
-      res[name] = { url = url, types = { type } }
+      tmp[name] = { url = url, types = { type } }
     end
+  end
+  local res = {}
+  for name, remote in pairs(tmp) do
+    res[#res + 1] = { name = name, url = remote.url, types = remote.types }
   end
   return res
 end

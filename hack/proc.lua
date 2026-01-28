@@ -1,5 +1,7 @@
 local io = require("io")
 
+local log = require("hack.log")
+
 local M = {}
 
 ---Run a command and returns its output.
@@ -15,6 +17,8 @@ function M.run(cmd, wdir, trim)
     full_cmd = string.format("cd %s; %s", wdir, full_cmd)
   end
 
+  log:debug("executing command: %s", full_cmd)
+
   local fh = assert(io.popen(full_cmd, "r"))
   local output = fh:read("*a")
   fh:close()
@@ -29,6 +33,8 @@ function M.run(cmd, wdir, trim)
   if trim then
     output = output:match("(.-)[%s]*$")
   end
+
+  log:debug("command returned (%d): %s", exit_code, output)
 
   return output, exit_code
 end

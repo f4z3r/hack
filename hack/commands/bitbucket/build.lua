@@ -10,16 +10,15 @@ local M = {}
 
 M.COMMAND_ARRAY = { "bitbucket", "build" }
 
+---Register the command on a parent parser.
+---@param p any The parent parser.
 function M.register_command(p)
-  local parser = p:command("build b"):summary("Act on builds."):description("")
-
-  parser
-    :argument("project/repo", "The project and repo to act upon, by default the repo of the current directory.")
-    :args("?")
-  parser:mutex(
-    parser:option("-p --pr", "ID of the PR from which to pull the latest build."),
-    parser:option("-c --commit", "The commit id to act upon.")
+  local parser = p:command("build b"):summary("List or modify builds."):description(
+    "Retrieve or change build stati for pull requests or specific commits of any repository you have access to."
   )
+
+  parser:argument("pr/commit", "The PR ID or commit hash on which to act.")
+  parser:option("-r --repository", "The project and repo to act upon, by default the repo of the current directory.")
   parser:mutex(
     parser:flag("--approve", "Approve the non-successful builds."),
     parser:flag("--cancel", "Cancel the non-successful builds.")
@@ -32,21 +31,25 @@ end
 function M.execute(server, options)
   local project
   local repo
-  if not options["project/repo"] then
+  if not options.repository then
     local remotes = git.get_remotes(".")
-    log:assert(#remotes ~= 1, "found %d remotes", #remotes)
+    log:assert(#remotes == 1, "found %d remotes", #remotes)
     project = bb.get_project_from_url(remotes[1].url)
+    log:info("got project from remote %s", project)
     repo = bb.get_repo_from_url(remotes[1].url)
+    log:info("got repository from remote %s", repo)
   else
-    project, repo = string.match(options["project/repo"], "^([^/]+)/([^/]+)$")
+    project, repo = string.match(options.repository, "^([^/]+)/([^/]+)$")
   end
   log:assert(project, "failed to detect project")
   log:assert(repo, "failed to detect repository")
-  local commit = options.commit
-  if not commit then
-    commit = server:get_latest_commit(project, repo, options.pr)
+  local commit = options["pr/commit"]
+  if string.match(commit, "^%d%d?%d?%d?%d?$") then
+    local pr_id = assert(tonumber(commit))
+    log:info("using PR with id %d", pr_id)
+    commit = server:get_latest_commit(project, repo, pr_id)
+    log:info("retrieved latest commit %s", commit)
   end
-  log:assert(commit, "You need to provide either --commit or --pr to get a commit on which to check builds.")
   local builds = server:get_builds(commit)
 
   print(string.format("Found %d build(s) for commit %s:", #builds, commit))
