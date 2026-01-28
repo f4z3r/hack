@@ -9,8 +9,9 @@
 
 ### A CLI tool to quickly interact with stuff I do not enjoy interacting with.
 
-[Develop](#develop) |
-[Ideas](#ideas)
+[Purpose](#purpose) |
+[Usage](#usage) |
+[Develop](#develop)
 
 <hr />
 </div>
@@ -37,12 +38,34 @@ generic enough to be re-usable. It therefore follows the following principles:
 - **Self-documenting**: the tool should be self-documenting via its command line help pages and
   internal code. No separate documentation will be maintained.
 
+## Usage
+
+Its usage is quite centric around the tools that tend to interact with. In all likelihood it is
+quite useless to you. But run the help command to understand how to use it:
+
+```
+$ hack -h
+Usage: hack ([-v] | [-q]) [-h] [--completion {bash,zsh,fish}] [-V]
+       [<command>] ...
+
+A tool that does all kinds of hacky things...
+
+Options:
+   -h, --help            Show this help message and exit.
+   --completion {bash,zsh,fish}
+                         Output a shell completion script for the specified
+                         shell.
+   -V, --version         Print the version of hack.
+   -v, --verbose         Set the verbosity for logging. Can be repeated.
+   -q, --quiet           Only log truly critical errors.
+
+Commands:
+   jira, j               Perform common actions against a Jira instance.
+   bitbucket, b          Perform common actions against a BitBucket server.
+
+See https://github.com/f4z3r/hack for more details.
+```
+
 ## Develop
 
-
-## Ideas
-
-- Bitbucket build flags
-- Keycloak operations
-
-## Notes
+<!-- TODO: f4z3r - add small note on development -->
