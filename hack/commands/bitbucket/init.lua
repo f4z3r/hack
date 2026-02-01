@@ -37,14 +37,14 @@ end
 ---@param options table The options provided by the command line parser.
 function M.execute(options)
   log:assert(
+    options.address,
+    "You must specify an address, either via --address or via the %s environment variable.",
+    cmd_utils.env_var_name(M.COMMAND_ARRAY, "address")
+  )
+  log:assert(
     options.username,
     "You must specify a username, either via --username or via the %s environment variable.",
     cmd_utils.env_var_name(M.COMMAND_ARRAY, "username")
-  )
-  log:assert(
-    options.password,
-    "You must specify a password, either via --password or via the %s environment variable.",
-    cmd_utils.env_var_name(M.COMMAND_ARRAY, "password")
   )
   local password = options.password
   if not password then
