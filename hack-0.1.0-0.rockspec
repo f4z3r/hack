@@ -9,20 +9,28 @@ source = {
   tag = "v" .. package_version,
 }
 description = {
-  summary = "A library to make CLIs beautiful.",
+  summary = "A tool that does all kinds of hacky things...",
   detailed = [[
-     TODO
+     This is a tool that I personally use to automate tasks I find boring,
+     repetitive, or outright just need some automation for whatever reason.
+     It does not attempt to be useful to anyone but myself.
+     Sorry - not sorry...
    ]],
   homepage = "https://github.com/f4z3r/hack/tree/main",
   license = "MIT",
 }
 dependencies = {
   "lua >= 5.1, < 5.4",
-  -- "TODO"
+  "basexx >= 0.4",
+  "lua-path >= 0.3",
+  "argparse >= 0.7",
+  "moonshine >= 0.1",
+  "http >= 0.4",
+  "rapidjson >= 0.7",
+  "luatext >= 1.2",
 }
 test_dependencies = {
   "busted >= 2.2",
-  "luatext >= 1.2",
 }
 test = {
   type = "busted",
