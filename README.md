@@ -2,10 +2,9 @@
 
 <img src="./assets/logo.png" alt="Hack" width="60%"></a>
 
-<!-- ![GitHub contributors](https://img.shields.io/github/contributors-anon/f4z3r/gruvbox-material.nvim) -->
-<!-- ![GitHub last commit](https://img.shields.io/github/last-commit/f4z3r/gruvbox-material.nvim) -->
-<!-- [![nixpkgs stable 25.05 package](https://repology.org/badge/version-for-repo/nix_stable_25_05/vim%3Agruvbox-material.nvim.svg)](https://repology.org/project/vim%3Agruvbox-material.nvim/versions) -->
-<!-- [![nixpkgs unstable package](https://repology.org/badge/version-for-repo/nix_unstable/vim%3Agruvbox-material.nvim.svg)](https://repology.org/project/vim%3Agruvbox-material.nvim/versions) -->
+![GitHub last commit](https://img.shields.io/github/last-commit/f4z3r/hack)
+![GitHub License](https://img.shields.io/github/license/f4z3r/hack?link=https%3A%2F%2Fgithub.com%2Ff4z3r%2hack%2Fblob%2Fmain%2FLICENSE)
+<!-- ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/f4z3r/moonshine/lint-and-test.yml) -->
 
 ### A CLI tool to quickly interact with stuff I do not enjoy interacting with.
 
@@ -68,4 +67,12 @@ See https://github.com/f4z3r/hack for more details.
 
 ## Develop
 
-<!-- TODO: f4z3r - add small note on development -->
+While this repository contains a RockSpec file to simplify installation on my machines, it is not
+published on Luarocks, as it is probably not useful to anybody. Moreover, while the source code is
+open and anyone can fork, change, or use this code, I will not accept outside contributions since,
+if I need something automated, it is probably part of this tool already. If it is not part of it,
+then either I have not yet encountered that pain-point, or would not benefit from its automation.
+All this documentation here is for my own reference as I expect to use this tool for several years
+and need to maintain it.
+
+I therefore will also not document how to start developing on this tool.
