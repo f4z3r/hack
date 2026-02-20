@@ -59,7 +59,7 @@ function Server:get_latest_commit(project, repo, pr_id)
     :get(string.format("rest/api/latest/projects/%s/repos/%s/pull-requests/%d", project, repo, pr_id))
     :go()
     :expect(function(response)
-      log:fatal("could not retrieve PR information (%d): %s", response.status, response.content)
+      log:fatal("could not retrieve PR information", "status", response.status, "body", response.content)
     end)
     :json().fromRef.latestCommit
 end
@@ -73,7 +73,15 @@ function Server:get_builds(commit)
     :get(string.format("rest/build-status/latest/commits/%s", commit))
     :go()
     :expect(function(response)
-      log:fatal("could not retrieve builds for commit %s (%d): %s", commit, response.status, response.content)
+      log:fatal(
+        "could not retrieve builds for commit",
+        "commit",
+        commit,
+        "status",
+        response.status,
+        "body",
+        response.content
+      )
     end)
     :json().values
 end
@@ -90,7 +98,17 @@ function Server:mark_build(project, repo, commit, key, status)
     :get(string.format("rest/api/latest/projects/%s/repos/%s/commits/%s/builds", project, repo, commit), { key = key })
     :go()
     :expect(function(response)
-      log:fatal("could not retrieve build %s for commit %s (%d): %s", key, commit, response.status, response.content)
+      log:fatal(
+        "could not retrieve build for commit",
+        "build",
+        key,
+        "commit",
+        commit,
+        "status",
+        response.status,
+        "body",
+        response.content
+      )
     end)
     :json()
   -- This is not properly documented on the REST API.
@@ -105,10 +123,14 @@ function Server:mark_build(project, repo, commit, key, status)
     :go()
     :expect(function(response)
       log:fatal(
-        "could not set build status for build %s on commit %s (%d): %s",
+        "could not set build status for build on commit",
+        "build",
         key,
+        "commit",
         commit,
+        "status",
         response.status,
+        "body",
         response.content
       )
     end)

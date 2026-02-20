@@ -35,7 +35,7 @@ function Server:get_tickets(jql_query, fields)
     })
     :go()
     :expect(function(response)
-      log:fatal("could not get issues for query '%s' (%d): %s", jql_query, response.status, response.content)
+      log:fatal("could not get issues for query", "jql", jql_query, "status", response.status, "body", response.content)
     end)
     :json().issues
 end

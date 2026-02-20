@@ -23,6 +23,7 @@ function M.parse()
     parser:flag("-v --verbose", "Set the verbosity for logging. Can be repeated."):count("0-2"):target("verbosity"),
     parser:flag("-q --quiet", "Only log truly critical errors.")
   )
+  parser:flag("--json", "Log in JSON format")
 
   jira.register_command(parser)
   bitbucket.register_command(parser)

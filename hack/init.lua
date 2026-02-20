@@ -22,6 +22,10 @@ function M.main()
     log:set_level(log.LogLevel.WARN)
   end
 
+  if options.json then
+    log:json()
+  end
+
   local cmd = options.command
   if not cmd then
     print(parser:get_usage())

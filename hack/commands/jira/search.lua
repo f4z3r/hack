@@ -35,7 +35,7 @@ function M.execute(server, options)
     query_parts[#query_parts + 1] = "status not in (Cancelled, Done)"
   end
   local jql = table.concat(query_parts, " AND ") .. " ORDER BY priority DESC, updated DESC"
-  log:info("final jql query: %s", jql)
+  log:info("final jql query", "jql", jql)
   local issues = server:get_tickets(jql, { "key", "summary" })
   if options.ids then
     for _, issue in ipairs(issues) do

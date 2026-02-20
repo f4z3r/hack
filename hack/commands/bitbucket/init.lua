@@ -1,3 +1,5 @@
+local string = require("string")
+
 local prompt = require("moonshine.prompt")
 
 local bb = require("hack.bitbucket")
@@ -16,7 +18,7 @@ function M.register_command(p)
     :summary("Perform common actions against a BitBucket server.")
     :description("")
     :command_target("subcommand")
-    :require_command(false)
+    :require_command(true)
 
   parser:option(
     "-a --address",
@@ -38,13 +40,17 @@ end
 function M.execute(options)
   log:assert(
     options.address,
-    "You must specify an address, either via --address or via the %s environment variable.",
-    cmd_utils.env_var_name(M.COMMAND_ARRAY, "address")
+    string.format(
+      "You must specify an address, either via --address or via the %s environment variable.",
+      cmd_utils.env_var_name(M.COMMAND_ARRAY, "address")
+    )
   )
   log:assert(
     options.username,
-    "You must specify a username, either via --username or via the %s environment variable.",
-    cmd_utils.env_var_name(M.COMMAND_ARRAY, "username")
+    string.format(
+      "You must specify a username, either via --username or via the %s environment variable.",
+      cmd_utils.env_var_name(M.COMMAND_ARRAY, "username")
+    )
   )
   local password = options.password
   if not password then

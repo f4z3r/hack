@@ -1,20 +1,31 @@
 local io = require("io")
 local os = require("os")
 local string = require("string")
+local table = require("table")
 
+local json = require("rapidjson")
 local text = require("luatext")
 
-local PREFIX = {
-  DEBUG = text.Text:new("DEBUG "):fg(text.Color.Magenta):render(),
-  INFO = text.Text:new("INFO "):fg(text.Color.Blue):render(),
-  WARN = text.Text:new("WARN "):fg(text.Color.Yellow):render(),
-  ERROR = text.Text:new("ERROR "):fg(text.Color.Red):render(),
-  FATAL = text.Text:new("FATAL "):fg(text.Color.Red):render(),
-}
+--- @param ... any
+--- @return table<string, any>
+local function to_args(...)
+  local count = select("#", ...)
+  local out = {}
+  assert(count % 2 == 0, "you cannot call logging with an odd number of args. e.g: msg, [k, v]...")
+  for i = 1, count, 2 do
+    local key = select(i, ...)
+    local value = select(i + 1, ...)
+    assert(type(key) == "string", "keys in logging must be strings")
+    assert(out[key] == nil, "key collision in logs: " .. key)
+    out[key] = value
+  end
+  return out
+end
 
 ---@class Logger
 ---@field private filename string
 ---@field private level LogLevel
+---@field private sink LoggerSink
 local Logger = {}
 
 ---@enum LogLevel
@@ -27,20 +38,91 @@ Logger.LogLevel = {
   OFF = 99,
 }
 
+local levelToString = {
+  [Logger.LogLevel.DEBUG] = "debug",
+  [Logger.LogLevel.INFO] = "info",
+  [Logger.LogLevel.WARN] = "warn",
+  [Logger.LogLevel.ERROR] = "error",
+  [Logger.LogLevel.FATAL] = "fatal",
+}
+
+local STANDARD_SINK_PREFIX = {
+  [Logger.LogLevel.DEBUG] = text.Text:new("DEBUG "):fg(text.Color.Magenta):render(),
+  [Logger.LogLevel.INFO] = text.Text:new("INFO "):fg(text.Color.Blue):render(),
+  [Logger.LogLevel.WARN] = text.Text:new("WARN "):fg(text.Color.Yellow):render(),
+  [Logger.LogLevel.ERROR] = text.Text:new("ERROR "):fg(text.Color.Red):render(),
+  [Logger.LogLevel.FATAL] = text.Text:new("FATAL "):fg(text.Color.Red):render(),
+}
+
+--- @class LoggerSink
+--- @field write_line fun(LoggerSink, LogLevel, string, table): nil
+
+--- @class StandardSink : LoggerSink
+local StandardSink = {}
+
+---Create a new standard sink. This writes log messages of the form:
+---
+---@return StandardSink
+function StandardSink:new()
+  local o = {}
+  setmetatable(o, self)
+  self.__index = self
+  return o
+end
+
+---@param level LogLevel The level that is being logged.
+---@param entry string A format string with potential placeholders.
+---@param args table<string, any> Additional arguments to log.
+function StandardSink:write_line(level, entry, args)
+  local line = STANDARD_SINK_PREFIX[level] .. entry
+  local arguments = {}
+  for k, v in pairs(args) do
+    arguments[#arguments + 1] = string.format("[%s=%s]", k, v)
+  end
+  line = line .. " " .. table.concat(arguments, " ")
+  io.stderr:write(line .. "\n")
+end
+
+--- @class JSONSink : LoggerSink
+local JSONSink = {}
+
+---Create a new standard sink. This writes log messages of the form:
+---
+---@return JSONSink
+function JSONSink:new()
+  local o = {}
+  setmetatable(o, self)
+  self.__index = self
+  return o
+end
+
+---@param lvl LogLevel The level that is being logged.
+---@param entry string A format string with potential placeholders.
+---@param args table<string, any> Additional arguments to log.
+function JSONSink:write_line(lvl, entry, args)
+  local content = { msg = entry, level = levelToString[lvl] }
+  for k, v in pairs(args) do
+    content[k] = v
+  end
+  io.stderr:write(json.encode(content) .. "\n")
+end
+
 ---Create a new logger. This should typically not be called unless you explicitly want to use a different logger.
 ---@return Logger
 function Logger:new()
-  local o = { level = self.LogLevel.WARN }
+  local o = { level = self.LogLevel.WARN, sink = StandardSink:new() }
   setmetatable(o, self)
   self.__index = self
   return o
 end
 
 ---Log something regardless of log-level.
+---@param level LogLevel The level that is being logged.
 ---@param entry string A format string with potential placeholders.
 ---@vararg any The values to fill into the placeholders.
-function Logger:log(entry, ...)
-  io.stderr:write(string.format(entry .. "\n", ...))
+function Logger:log(level, entry, ...)
+  local args = to_args(...)
+  self.sink:write_line(level, entry, args)
 end
 
 ---Debug log a message.
@@ -48,7 +130,7 @@ end
 ---@vararg any The values to fill into the placeholders.
 function Logger:debug(entry, ...)
   if self.level <= self.LogLevel.DEBUG then
-    self:log(PREFIX.DEBUG .. entry, ...)
+    self:log(self.LogLevel.DEBUG, entry, ...)
   end
 end
 
@@ -57,7 +139,7 @@ end
 ---@vararg any The values to fill into the placeholders.
 function Logger:info(entry, ...)
   if self.level <= self.LogLevel.INFO then
-    self:log(PREFIX.INFO .. entry, ...)
+    self:log(self.LogLevel.INFO, entry, ...)
   end
 end
 
@@ -66,7 +148,7 @@ end
 ---@vararg any The values to fill into the placeholders.
 function Logger:warn(entry, ...)
   if self.level <= self.LogLevel.WARN then
-    self:log(PREFIX.WARN .. entry, ...)
+    self:log(self.LogLevel.WARN, entry, ...)
   end
 end
 
@@ -75,7 +157,7 @@ end
 ---@vararg any The values to fill into the placeholders.
 function Logger:error(entry, ...)
   if self.level <= self.LogLevel.ERROR then
-    self:log(PREFIX.ERROR .. entry, ...)
+    self:log(self.LogLevel.ERROR, entry, ...)
   end
 end
 
@@ -84,7 +166,7 @@ end
 ---@vararg any The values to fill into the placeholders.
 function Logger:fatal(entry, ...)
   if self.level <= self.LogLevel.FATAL then
-    self:log(PREFIX.FATAL .. entry, ...)
+    self:log(self.LogLevel.FATAL, entry, ...)
   end
   os.exit(27)
 end
@@ -104,6 +186,11 @@ end
 ---@param level LogLevel
 function Logger:set_level(level)
   self.level = level
+end
+
+---Set to a JSON logger.
+function Logger:json()
+  self.sink = JSONSink:new()
 end
 
 return Logger:new()

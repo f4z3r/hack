@@ -86,11 +86,11 @@ end
 ---@return Response
 function Request:go(timeout)
   timeout = timeout or DEFAULT_TIMEOUT
-  log:debug("making %s request to %s", self.req.headers:get(":method"), self.req:to_uri())
+  log:debug("making request", "method", self.req.headers:get(":method"), "url", self.req:to_uri())
   local resp_headers, stream = assert(self.req:go(timeout))
   local status = tonumber(resp_headers:get(":status"))
   local body = stream:get_body_as_string()
-  log:debug("received response (%d): %s", status, body)
+  log:debug("received response", "status", status, "body", body)
   return Response:new({ status = status, content = body })
 end
 

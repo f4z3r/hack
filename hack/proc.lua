@@ -17,7 +17,7 @@ function M.run(cmd, wdir, trim)
     full_cmd = string.format("cd %s; %s", wdir, full_cmd)
   end
 
-  log:debug("executing command: %s", full_cmd)
+  log:debug("executing command", "command", full_cmd)
 
   local fh = assert(io.popen(full_cmd, "r"))
   local output = fh:read("*a")
@@ -34,7 +34,7 @@ function M.run(cmd, wdir, trim)
     output = output:match("(.-)[%s]*$")
   end
 
-  log:debug("command returned (%d): %s", exit_code, output)
+  log:debug("command returned", "exit_code", exit_code, "output", output)
 
   return output, exit_code
 end

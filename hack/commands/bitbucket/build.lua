@@ -33,11 +33,11 @@ function M.execute(server, options)
   local repo
   if not options.repository then
     local remotes = git.get_remotes(".")
-    log:assert(#remotes == 1, "found %d remotes", #remotes)
+    log:assert(#remotes == 1, "found more than one remote", "count", #remotes)
     project = bb.get_project_from_url(remotes[1].url)
-    log:info("got project from remote %s", project)
+    log:info("got project from remote", "project", project)
     repo = bb.get_repo_from_url(remotes[1].url)
-    log:info("got repository from remote %s", repo)
+    log:info("got repository from remote", "repository", repo)
   else
     project, repo = string.match(options.repository, "^([^/]+)/([^/]+)$")
   end
@@ -46,9 +46,9 @@ function M.execute(server, options)
   local commit = options["pr/commit"]
   if string.match(commit, "^%d%d?%d?%d?%d?$") then
     local pr_id = assert(tonumber(commit))
-    log:info("using PR with id %d", pr_id)
+    log:info("using PR with id", "pr_id", pr_id)
     commit = server:get_latest_commit(project, repo, pr_id)
-    log:info("retrieved latest commit %s", commit)
+    log:info("retrieved latest commit", "commit", commit)
   end
   local builds = server:get_builds(commit)
 
@@ -74,13 +74,13 @@ function M.execute(server, options)
           and prompt.confirm(string.format("Mark build %s as successful", text.Text:new(build.key):fg(text.Color.Blue)))
         then
           server:mark_build(project, repo, commit, build.key, bb.BuildStatus.Successful)
-          log:warn("marked build %s as successful", build.key)
+          log:warn("marked build as successful", "build", build.key)
         elseif
           options.cancel
           and prompt.confirm(string.format("Mark build %s as cancelled", text.Text:new(build.key):fg(text.Color.Blue)))
         then
           server:mark_build(project, repo, commit, build.key, bb.BuildStatus.Cancelled)
-          log:warn("marked build %s as cancelled", build.key)
+          log:warn("marked build as cancelled", "build", build.key)
         end
       end
     end
