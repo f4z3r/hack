@@ -34,7 +34,7 @@ body = """
     {%- for commit in commits %}
         {%- if commit.scope -%}
         {% else -%}
-            - _(No Category)_ {{ commit.message | upper_first }}
+            - {{ commit.message | upper_first }}
             {%- if commit.breaking %}
             {% raw %}  {% endraw %}- **BREAKING**: {{commit.breaking_description}}
             {%- endif -%}
