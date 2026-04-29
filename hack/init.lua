@@ -2,7 +2,7 @@ local log = require("hack.log")
 
 local M = {}
 
-M.VERSION = "0.1.0"
+M.VERSION = "0.2.0"
 
 function M.main()
   local commands = require("hack.commands")

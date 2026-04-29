@@ -2,32 +2,25 @@
 
 local strings = require("hack.strings")
 
-context("Given we are split strings", function()
-  describe("when we provide a string without separators, it", function()
-    local sep = "yy"
-    local str = "bbaaccaabb"
-    local res = strings.split(str, sep)
-
-    it("returns the initial string", function()
+context("String", function()
+  describe("split", function()
+    it("returns the initial string when the separator is not in the original string", function()
+      local str = "bbaaccaabb"
+      local sep = "yy"
+      local res = strings.split(str, sep)
       assert.are.same({ str }, res)
     end)
-  end)
 
-  describe("when we provide a string with 2 separators, it", function()
-    local sep = "aa"
-    local str = "bbaaccaabb"
-    local res = strings.split(str, sep)
-
-    it("correctly provides the correct 3 values", function()
+    it("returns a list of substrings when provided a separator contained in the original string", function()
+      local str = "bbaaccaabb"
+      local sep = "aa"
+      local res = strings.split(str, sep)
       assert.are.same({ "bb", "cc", "bb" }, res)
     end)
-  end)
 
-  describe("when split by lines, it", function()
-    local str = "test\nthis\n\nyes"
-    local res = strings.lines(str)
-
-    it("returns the correct number of lines", function()
+    it("returns the correct number of lines when splitting by newlines", function()
+      local str = "test\nthis\n\nyes"
+      local res = strings.lines(str)
       assert.are.equal(4, #res)
     end)
   end)

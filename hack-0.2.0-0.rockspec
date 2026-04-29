@@ -1,4 +1,4 @@
-local package_version = "0.1.0"
+local package_version = "0.2.0"
 local rockspec_revision = "0"
 
 rockspec_format = "3.0"
@@ -28,6 +28,7 @@ dependencies = {
   "http >= 0.4",
   "rapidjson >= 0.7",
   "luatext >= 1.2",
+  "date >= 2.0",
 }
 test_dependencies = {
   "busted >= 2.2",
@@ -45,9 +46,13 @@ build = {
     ["hack.commands.bitbucket.build"] = "hack/commands/bitbucket/build.lua",
     ["hack.commands.jira"] = "hack/commands/jira/init.lua",
     ["hack.commands.jira.search"] = "hack/commands/jira/search.lua",
+    ["hack.commands.docker"] = "hack/commands/docker/init.lua",
+    ["hack.commands.docker.prune"] = "hack/commands/docker/prune.lua",
     ["hack.http"] = "hack/http/init.lua",
     ["hack.http.client"] = "hack/http/client.lua",
     ["hack.jira"] = "hack/jira/init.lua",
+    ["hack.docker"] = "hack/docker/init.lua",
+    ["hack.docker.image"] = "hack/docker/image.lua",
     ["hack.fs"] = "hack/fs.lua",
     ["hack.git"] = "hack/git.lua",
     ["hack"] = "hack/init.lua",

@@ -5,13 +5,16 @@ local log = require("hack.log")
 local M = {}
 
 ---Run a command and returns its output.
----@param cmd string The command to run.
+---@param cmd string|table The command to run.
 ---@param wdir string? The working directory in which to execute the command, by default the current working directory.
 ---@param trim boolean? Whether to trim whitespace of the end of the output.
 ---@return string The output of the command.
 ---@return number The status code of the command.
 function M.run(cmd, wdir, trim)
   local delimiter = "LUA_EXIT_CODE"
+  if type(cmd) == "table" then
+    cmd = table.concat(cmd, " ")
+  end
   local full_cmd = string.format([[(%s 2>&1; echo "%s$?")]], cmd, delimiter)
   if wdir then
     full_cmd = string.format("cd %s; %s", wdir, full_cmd)
