@@ -5,7 +5,8 @@ local image = require("hack.docker.image")
 context("Docker", function()
   describe("Image", function()
     it("can be created from a docker JSON output", function()
-      local json = [[{"Containers":"0","CreatedAt":"2025-08-26 22:25:20 +0200 CEST","CreatedSince":"8 months ago","Digest":"\u003cnone\u003e","ID":"fb90a2eb6a79","Repository":"nix","SharedSize":"N/A","Size":"9.75GB","Tag":"test","UniqueSize":"N/A"}]]
+      local json =
+        [[{"Containers":"0","CreatedAt":"2025-08-26 22:25:20 +0200 CEST","CreatedSince":"8 months ago","Digest":"\u003cnone\u003e","ID":"fb90a2eb6a79","Repository":"nix","SharedSize":"N/A","Size":"9.75GB","Tag":"test","UniqueSize":"N/A"}]]
       local test_image = image.Image:new_from_docker_json(json)
       assert.are.equal("fb90a2eb6a79", test_image:identity())
       assert.are.equal("2025-08-26", test_image:created_at())

@@ -1,8 +1,8 @@
 local argparse = require("argparse")
 
 local bitbucket = require("hack.commands.bitbucket")
-local jira = require("hack.commands.jira")
 local docker = require("hack.commands.docker")
+local jira = require("hack.commands.jira")
 
 local M = {}
 
