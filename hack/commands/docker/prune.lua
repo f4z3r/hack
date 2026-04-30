@@ -36,10 +36,12 @@ local function prune_images(client, options)
   for _, image in ipairs(images) do
     if
       options.force
-      or prompt.confirm(string.format("Prune image %s", text.Text:new(image:fullname()):fg(text.Color.Blue)))
+      or prompt.confirm(
+        string.format("Prune image %s@%s", text.Text:new(image:fullname()):fg(text.Color.Blue), image.digest)
+      )
     then
       client:delete_image(image)
-      log:warn("pruned image from system", "image", image:identity())
+      log:warn("pruned image from system", "id", image.id)
     end
   end
 end

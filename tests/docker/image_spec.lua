@@ -5,12 +5,23 @@ local image = require("hack.docker.image")
 context("Docker", function()
   describe("Image", function()
     it("can be created from a docker JSON output", function()
-      local json =
-        [[{"Containers":"0","CreatedAt":"2025-08-26 22:25:20 +0200 CEST","CreatedSince":"8 months ago","Digest":"\u003cnone\u003e","ID":"fb90a2eb6a79","Repository":"nix","SharedSize":"N/A","Size":"9.75GB","Tag":"test","UniqueSize":"N/A"}]]
+      local json = [[{
+        "Containers": "0",
+        "CreatedAt": "2026-04-20 23:46:16 +0200 CEST",
+        "CreatedSince": "8 days ago",
+        "Digest": "sha256:5ba8bb318666baef4d33afefc0e65db80f38b23503cb8e7b150d315cc2d4d5da",
+        "ID": "c26b5ec8ec89",
+        "Repository": "archlinux",
+        "SharedSize": "N/A",
+        "Size": "389MB",
+        "Tag": "latest",
+        "UniqueSize": "N/A"
+      }]]
       local test_image = image.Image:new_from_docker_json(json)
-      assert.are.equal("fb90a2eb6a79", test_image:identity())
-      assert.are.equal("2025-08-26", test_image:created_at())
-      assert.are.equal("nix:test", test_image:fullname())
+      assert.are.equal("c26b5ec8ec89", test_image.id)
+      assert.are.equal("2026-04-20", test_image:created_at())
+      assert.are.equal("archlinux:latest", test_image:fullname())
+      assert.are.equal("sha256:5ba8bb318666baef4d33afefc0e65db80f38b23503cb8e7b150d315cc2d4d5da", test_image.digest)
     end)
   end)
 end)
@@ -76,9 +87,30 @@ context("Podman", function()
         "CreatedAt": "2025-04-11T07:59:19Z"
       }]]
       local test_image = image.Image:new_from_podman_json(json)
-      assert.are.equal("8a449b5ad73f4321fe6fc09dc612200dcae011e8df332ee7bad0a48e58303310", test_image:identity())
+      assert.are.equal("8a449b5ad73f4321fe6fc09dc612200dcae011e8df332ee7bad0a48e58303310", test_image.id)
       assert.are.equal("2025-04-11", test_image:created_at())
       assert.are.equal("quay.io/keycloak/keycloak:26.1", test_image:fullname())
+      assert.are.equal("sha256:925e11c01018d3d1ac734fd450307f420887f480c01fe723c361b887113742c7", test_image.digest)
+    end)
+
+    it("should be able to handle missing names", function()
+      local json = [[{
+        "Id": "8a449b5ad73f4321fe6fc09dc612200dcae011e8df332ee7bad0a48e58303310",
+        "ParentId": "",
+        "RepoTags": null,
+        "Size": 451127168,
+        "SharedSize": 0,
+        "VirtualSize": 451127168,
+        "Containers": 0,
+        "Digest": "sha256:925e11c01018d3d1ac734fd450307f420887f480c01fe723c361b887113742c7",
+        "Created": 1744358359,
+        "CreatedAt": "2025-04-11T07:59:19Z"
+      }]]
+      local test_image = image.Image:new_from_podman_json(json)
+      assert.are.equal("8a449b5ad73f4321fe6fc09dc612200dcae011e8df332ee7bad0a48e58303310", test_image.id)
+      assert.are.equal("2025-04-11", test_image:created_at())
+      assert.are.equal("<none>:<none>", test_image:fullname())
+      assert.are.equal("sha256:925e11c01018d3d1ac734fd450307f420887f480c01fe723c361b887113742c7", test_image.digest)
     end)
   end)
 end)

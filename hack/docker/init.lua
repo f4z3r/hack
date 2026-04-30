@@ -42,7 +42,7 @@ end
 ---Get all images
 ---@return hack.docker.Image[]
 function DockerClient:get_images()
-  local cmd = { self.cmd, "image", "list", "-a", "--format", "json" }
+  local cmd = { self.cmd, "image", "list", "-a", "--digests", "--format", "json" }
   local images = {}
   local out, status = proc.run(cmd)
   log:assert(status, "failed to retrieve docker images", "output", out)
@@ -55,7 +55,7 @@ end
 ---Delete an image
 ---@param image hack.docker.Image The image to delete.
 function DockerClient:delete_image(image)
-  local cmd = { self.cmd, "rmi", image:identity(), "-f" }
+  local cmd = { self.cmd, "rmi", image.id, "-f" }
   local out, status = proc.run(cmd)
   log:assert(status, "image deletion failed", "output", out)
 end
@@ -89,7 +89,7 @@ end
 ---Delete an image
 ---@param image hack.docker.Image The image to delete.
 function PodmanClient:delete_image(image)
-  local cmd = { self.cmd, "rmi", image:identity(), "-f" }
+  local cmd = { self.cmd, "rmi", image.id, "-f" }
   local out, status = proc.run(cmd)
   log:assert(status, "image deletion failed", "output", out)
 end
