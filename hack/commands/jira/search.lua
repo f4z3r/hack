@@ -15,6 +15,7 @@ function M.register_command(p)
   parser:argument("term", "The term to search for."):args("?")
   parser:option("-p --project", "The project to search."):count("+")
   parser:option("-a --assignee", "The assignee to filter by.")
+  parser:option("-r --reporter", "The reporter to filter by.")
   parser:flag("-c --closed", "Include closed issues in the search.")
   parser:flag("-i --ids", "Just output the list of IDs.")
   parser:flag("-d --description", "Also search within the description.")
@@ -40,6 +41,9 @@ function M.execute(server, options)
   end
   if options.assignee then
     query_parts[#query_parts + 1] = string.format("assignee = '%s'", options.assignee)
+  end
+  if options.reporter then
+    query_parts[#query_parts + 1] = string.format("reporter = '%s'", options.reporter)
   end
   local jql = table.concat(query_parts, " AND ") .. " ORDER BY priority DESC, updated DESC"
   log:info("final jql query", "jql", jql)
