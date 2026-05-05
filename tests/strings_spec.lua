@@ -24,4 +24,18 @@ context("String", function()
       assert.are.equal(4, #res)
     end)
   end)
+
+  describe("is_uuid", function()
+    it("returns that a regular UUID v4 is a valid UUID", function()
+      assert.is.truthy(strings.is_uuid("56cd7c06-b9d2-4b76-b3b6-77e3fe91ee2f"))
+    end)
+
+    it("detects that a random string is not a valid UUID", function()
+      assert.is.falsy(strings.is_uuid("56cd7c06-b9d2-4b76-b3b6-77e3fe91ee2"))
+    end)
+
+    it("detects that an invalid UUID string is not a valid UUID", function()
+      assert.is.falsy(strings.is_uuid("56cd7z06-b9d2-4b76-b3b6-77e3fe91ee2"))
+    end)
+  end)
 end)

@@ -34,4 +34,20 @@ function M.lines(str, discard_empty)
   return res
 end
 
+---Checks whether the input string is a UUID. The UUID version is not enforced.
+---@param str string The input string to check.
+---@return boolean
+function M.is_uuid(str)
+  local uuid_len = 36
+  if string.len(str) ~= uuid_len then
+    return false
+  end
+  local hex = "%x"
+  local group_of_4 = string.rep(hex, 4)
+  local group_of_8 = string.rep(hex, 8)
+  local group_of_12 = string.rep(hex, 12)
+  local pattern = string.format("%s%%-%s%%-%s%%-%s%%-%s", group_of_8, group_of_4, group_of_4, group_of_4, group_of_12)
+  return string.find(str, pattern) == 1
+end
+
 return M
