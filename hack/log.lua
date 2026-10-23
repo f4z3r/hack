@@ -176,10 +176,12 @@ end
 ---@param exp any An expression that will be use in boolean context for an assertion.
 ---@param entry string A format string with potential placeholders.
 ---@vararg any The values to fill into the placeholders.
+---@return any The value of the input expression.
 function Logger:assert(exp, entry, ...)
   if not exp then
     self:fatal(entry, ...)
   end
+  return exp
 end
 
 ---Set the log level of the logger.
