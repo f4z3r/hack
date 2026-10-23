@@ -5,6 +5,17 @@ local client = require("hack.http.client")
 
 local M = {}
 
+---Get the endpoint based on the remote repository URL.
+---@param url string The remote URL.
+---@return string?
+function M.get_endpoint_from_url(url)
+  local ssh_match = string.match(url, "ssh://git@([^/]+)")
+  if ssh_match then
+    return "https://" .. ssh_match
+  end
+  return string.match(url, "(https://[^/]+)")
+end
+
 ---Get the repository name based on the remote repository URL.
 ---@param url string The remote URL.
 ---@return string?

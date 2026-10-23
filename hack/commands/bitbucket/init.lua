@@ -5,6 +5,7 @@ local prompt = require("moonshine.prompt")
 local bb = require("hack.bitbucket")
 local build = require("hack.commands.bitbucket.build")
 local cmd_utils = require("hack.commands.utils")
+local git = require("hack.git")
 local log = require("hack.log")
 
 local M = {}
@@ -39,13 +40,6 @@ end
 ---@param options table The options provided by the command line parser.
 function M.execute(options)
   log:assert(
-    options.address,
-    string.format(
-      "You must specify an address, either via --address or via the %s environment variable.",
-      cmd_utils.env_var_name(M.COMMAND_ARRAY, "address")
-    )
-  )
-  log:assert(
     options.username,
     string.format(
       "You must specify a username, either via --username or via the %s environment variable.",
@@ -56,6 +50,18 @@ function M.execute(options)
   if not password then
     password = prompt.get_pass("Bitbucket password:")
   end
+  local remotes = git.get_remotes(".")
+  if #remotes > 0 then
+    options.address =
+      log:assert(bb.get_endpoint_from_url(remotes[1].url), "Failed to retrieve remote URL from current repository")
+  end
+  log:assert(
+    options.address,
+    string.format(
+      "You must specify an address, either via --address or via the %s environment variable.",
+      cmd_utils.env_var_name(M.COMMAND_ARRAY, "address")
+    )
+  )
   local server = bb.Server:new(options.address, options.username, password)
   require("hack.commands.bitbucket." .. options.subcommand).execute(server, options)
 end
