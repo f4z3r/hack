@@ -8,8 +8,8 @@ M.COMMAND_ARRAY = { "docker" }
 ---@param p any The parent parser.
 function M.register_command(p)
   local parser = p:command("docker d")
-    :summary("Perform common actions against docker.")
-    :description("")
+    :summary("do stuff with docker")
+    :description("Perform common actions against docker.")
     :command_target("subcommand")
     :require_command(true)
 

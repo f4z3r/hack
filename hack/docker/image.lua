@@ -26,14 +26,14 @@ end
 ---@param source string The source JSON string from docker.
 ---@return hack.docker.Image
 function Image:new_from_docker_json(source)
-  local deserialised = json.decode(source)
-  local created = parse_docker_date(deserialised.CreatedAt)
+  local deserialized = json.decode(source)
+  local created = parse_docker_date(deserialized.CreatedAt)
   local o = {
-    id = deserialised.ID,
+    id = deserialized.ID,
     created = created,
-    repository = deserialised.Repository,
-    tag = deserialised.Tag,
-    digest = deserialised.Digest,
+    repository = deserialized.Repository,
+    tag = deserialized.Tag,
+    digest = deserialized.Digest,
   }
   setmetatable(o, self)
   self.__index = self
@@ -54,18 +54,18 @@ end
 ---@param source string The source JSON string from podman.
 ---@return hack.docker.Image
 function Image:new_from_podman_json(source)
-  local deserialised = json.decode(source)
-  local created = date(deserialised.CreatedAt)
+  local deserialized = json.decode(source)
+  local created = date(deserialized.CreatedAt)
   local repo, tag = "<none>", "<none>"
-  if deserialised.Names then
-    repo, tag = parse_podman_repo_and_tag(deserialised.Names)
+  if deserialized.Names then
+    repo, tag = parse_podman_repo_and_tag(deserialized.Names)
   end
   local o = {
-    id = deserialised.Id,
+    id = deserialized.Id,
     created = created,
     repository = repo,
     tag = tag,
-    digest = deserialised.Digest,
+    digest = deserialized.Digest,
   }
   setmetatable(o, self)
   self.__index = self

@@ -16,8 +16,8 @@ M.COMMAND_ARRAY = { "bitbucket" }
 ---@param p any The parent parser.
 function M.register_command(p)
   local parser = p:command("bitbucket b")
-    :summary("Perform common actions against a BitBucket server.")
-    :description("")
+    :summary("act on BitBucket")
+    :description("Perform common actions against a BitBucket server.")
     :command_target("subcommand")
     :require_command(true)
 

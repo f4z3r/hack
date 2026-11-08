@@ -2,6 +2,7 @@ local argparse = require("argparse")
 
 local bitbucket = require("hack.commands.bitbucket")
 local docker = require("hack.commands.docker")
+local hypr = require("hack.commands.hypr")
 local jira = require("hack.commands.jira")
 
 local M = {}
@@ -29,6 +30,7 @@ function M.parse()
   jira.register_command(parser)
   bitbucket.register_command(parser)
   docker.register_command(parser)
+  hypr.register_command(parser)
 
   return parser:parse(), parser
 end

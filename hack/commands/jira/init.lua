@@ -15,8 +15,8 @@ M.COMMAND_ARRAY = { "jira" }
 ---@param p any The parent parser.
 function M.register_command(p)
   local parser = p:command("jira j")
-    :summary("Perform common actions against a Jira instance.")
-    :description("")
+    :summary("do Jira things")
+    :description("Perform common actions against a Jira instance.")
     :command_target("subcommand")
     :require_command(true)
 
